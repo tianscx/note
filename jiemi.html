@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>解密文本</title>
+    <style>
+        .myRes{
+            padding:8px;
+            margin-top: 20px;
+            resize: none;
+            width: 308px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+<input type="text" class="mytxt" style="padding: 5px 12px;width: 300px;" placeholder="请输入密文"> <button id="button">确定</button><br>
+<textarea class="myRes" placeholder="解密结果" readonly></textarea>
+</body>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+<script>
+    $('#button').click(function () {
+        var text = $('.mytxt').val();
+        if(!text){
+            return;
+        }else {
+            $.ajax({
+                type:'POST',
+//                url:'http://localhost/note/api/jiemi.php',
+                url:'http://106.13.66.238/note/api/jiemi.php',
+                data:{text:text},
+                success:function (res) {
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if(res.code == 0){
+                        $('.myRes').val(res.res)
+                    }
+                }
+            })
+        }
+    })
+</script>
+</html>

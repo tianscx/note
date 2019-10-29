@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>重置隐私密码</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        .main{
+            text-align: center;
+        }
+        .line{
+            margin:18px auto;
+        }
+        .line>span{
+            display: inline-block;
+            width: 70px;
+        }
+        .button{
+            margin:30px auto;
+        }
+        .button>span{
+            padding: 5px 24px;
+            background-color: rgb(64, 158, 255);
+            color: #fff;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .button>span:active{
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="main text">
+        <h3 >重置隐私密码（仅用来访问加密笔记）</h3>
+        <div class="line" style="margin-top:30px;">
+            <span>邮箱：</span><input type="text" class="email">
+        </div>
+        <div class="line">
+            <span>新密码：</span><input type="text" class="password">
+        </div>
+        <div class="button"><span>确定</span></div>
+    </div>
+</body>
+<script src="http://106.13.66.238/js/jquery-3.2.0.js"></script>
+
+<script>
+    var search = location.search;
+    var time = 5;
+    if(search){
+        console.log(search.substr(1));
+        search =search.substr(1)
+        var serchArr = [];
+        var serchObj = {};
+        serchArr = search.split('&');
+        for(var a = 0; a < serchArr.length; a++){
+            var arrItem = serchArr[a].split('=');
+            serchObj[arrItem[0]] = arrItem[1];
+        }
+        console.log(serchObj)
+    }
+    function reset() {
+        var email = $('.email').val();
+        var password = $('.password').val();
+        if(!email || !password){
+            alert('请填写邮箱和密码！');
+            return
+        }
+        $.ajax({
+            type:'POST',
+//            url:'https://liyq.club/note/api/reset_safe.php',
+            url:'http://106.13.66.238/note/api/reset_safe.php',
+            data:{
+                id:serchObj.id,
+                email:email,
+                password:password
+            },
+            success:function (res) {
+                console.log(res);
+                res = JSON.parse(res)
+                if(res.data == 0){
+                    setText()
+                }else if(res.data == -2){
+                    alert('邮箱不正确！');
+                }else if(res.data == -1){
+                    alert('缺少参数！')
+                }else {
+                    alert('服务器错误，请重试！')
+                }
+            }
+        })
+        console.log(serchObj)
+    }
+    $('.button>span').click(function () {
+        reset();
+    });
+    function setText() {
+        $('.text').html('重置密码成功！'+ time + '秒后自动跳转');
+
+        if(time == 0){
+//            location.href = "http://107.175.214.24/note"
+            location.href = "http://106.13.66.238/note"
+        }else {
+            time --;
+        }
+        setTimeout(function () {
+            setText()
+        },1000)
+    }
+</script>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>激活账号</title>
+</head>
+<body>
+    <div class="text" style="margin: 20px auto;text-align: center">
+        正在激活，请稍后...
+    </div>
+</body>
+
+<script src="http://106.13.66.238/js/jquery-3.2.0.js"></script>
+<script>
+    var search = location.search;
+    var time = 5;
+    if(search){
+        console.log(search.substr(1));
+        search =search.substr(1)
+        var serchArr = [];
+        var serchObj = {};
+        serchArr = search.split('&');
+        console.log(serchArr);
+        for(var a = 0; a < serchArr.length; a++){
+            var arrItem = serchArr[a].split('=');
+            serchObj[arrItem[0]] = arrItem[1];
+        }
+        console.log(serchObj)
+        if(serchObj && serchObj.user){
+            $.ajax({
+                url:'http://106.13.66.238/note/api/activate.php?user=' + serchObj.user,
+                success:function (code) {
+                    code = JSON.parse(code)
+                    if(code.code == 0){
+                        setText()
+                    }else if(code.code == -1){
+                        alert('激活失败！缺少用户名')
+                    }else{
+                        alert('激活失败！请刷新重试')
+                    }
+                },
+                error:function () {
+                    alert('激活失败！')
+                }
+            })
+        }
+    }
+    function setText() {
+        $('.text').text('激活成功！'+ time + '秒后自动跳转');
+
+        if(time == 0){
+//            location.href = "http://107.175.214.24/note"
+            location.href = "http://106.13.66.238/note"
+        }else {
+            time --;
+        }
+        setTimeout(function () {
+            setText()
+        },1000)
+    }
+</script>
+</html>
